@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./main.js"></script>
+  </head>
+  <body>
+    <template id="MyButton">
+      <slot />
+    </template>
+
+    <button is="my-button" count="0">click</button>
+
+    <script type="module">
+      import { Comp } from "./dom.js";
+
+      Comp(
+        {
+          name: "MyButton",
+          elm: "button",
+          init,
+          mount,
+          unmount,
+          mutated,
+          props: ["count"],
+        },
+        increment
+      );
+
+      function init() {
+        console.log("INITIALIZED");
+      }
+
+      function mount() {
+        console.log("MOUNTED");
+
+        this.addEventListener("click", this.increment);
+
+        return () => {
+          console.log("unmounted from mount callback");
+          this.removeEventListener("click", this.increment);
+        };
+      }
+
+      function unmount() {
+        console.log("UNMOUNTED");
+      }
+
+      function mutated(attrName, oldVal, newVal) {
+        console.log("MUTATED");
+
+        let countContainer = this.querySelector("span");
+        if (!countContainer) {
+          countContainer = document.createElement("span");
+          this.appendChild(countContainer);
+        }
+        countContainer.textContent = " " + this.count;
+      }
+
+      function increment() {
+        console.log("INCREMENTED");
+        this.count = +this.count + 1;
+      }
+    </script>
+  </body>
+</html>
