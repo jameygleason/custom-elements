@@ -1,85 +1,55 @@
-import { decamel } from "./utils.js";
+// @ts-ignore
+window.dom = document
 
-export function Comp(
-  { name, elm, template, init, mount, unmount, mutated, props },
-  ...methods
-) {
-  try {
-    const elmMap = {
-      button: "HTMLButtonElement",
-    };
+// Give nodelists array properties
+// @ts-ignore
+NodeList.prototype.__proto__ = Array.prototype
 
-    if (elm && template) {
-      console.error("Cannot attach shadow root to non-generic elements");
-      console.error(
-        "Choose between hyphenated element name and native element with is attribute"
-      );
-    }
+// Get
+// @ts-ignore
+Node.prototype.get = dom.querySelector.bind(dom)
+// @ts-ignore
+NodeList.prototype.get = dom.querySelector.bind(dom)
 
-    Function(`class ${name} extends ${
-      elmMap[elm] ? elmMap[elm] : "HTMLElement"
-    } {
-			constructor() {
-				super();
+// Get all
+// @ts-ignore
+Node.prototype.getAll = dom.querySelectorAll.bind(dom)
+// @ts-ignore
+NodeList.prototype.getAll = dom.querySelectorAll.bind(dom)
 
-        ${
-          template
-            ? `
-          let shad = this.attachShadow({ mode: "open" });
-          let temp = dom.get("#${name}");
-          let cl = temp.content.cloneNode(true);
-          shad.appendChild(cl);
-        `
-            : ""
-        }
-
-				(${init && init}).call(this);
-
-				let methods = ${methods};
-				${methods
-          .map((_, i) => `this.${methods[i].name} = ${methods[i]};`)
-          .toString()
-          .replaceAll("},", "};")}
-				${methods
-          .map(
-            (_, i) =>
-              `this.${methods[i].name} = this.${methods[i].name}.bind(this);`
-          )
-          .toString()
-          .replaceAll("},", "};")}
-			}
-
-			connectedCallback() {
-				this.unmount = (${mount && mount}).call(this);
-			}
-
-			disconnectedCallback() {
-				(${unmount && unmount}).call(this);
-				this.unmount && this.unmount.call(this);
-			}
-
-			attributeChangedCallback(attrName, oldVal, newVal) {
-				console.log("CHANGED:", attrName);
-				(${mutated && mutated}).call(this, attrName, oldVal, newVal);
-			}
-
-			static get observedAttributes() {
-				return [${props.map((p) => `"${p}"`).toString()}]
-			}
-
-			${props
-        .map(
-          (prop) =>
-            `get ${prop}() {return this.getAttribute("${prop}")};set ${prop}(val) {this.setAttribute("${prop}",val)}`
-        )
-        .toString()
-        .replaceAll("},", "};")}
-			}
-			customElements.define("${decamel(name)}", ${name}, ${
-      elm && `{extends:"${elm}"}`
-    })
-		`)();
-  } catch (err) {
-    console.error(err);
-  }
+// Listeners
+// @ts-ignore
+Node.prototype.addListener = window.addListener = function (name, fn) {
+	this.addEventListener(name, fn)
 }
+
+// @ts-ignore
+NodeList.prototype.addListener = NodeList.prototype.addEventListener =
+function (name, fn) {
+	this.forEach(function (elem, i) {
+			// @ts-ignore
+			elem.addListener(name, fn)
+		})
+	}
+	
+	// @ts-ignore
+	Node.prototype.removeListener = window.removeListener = function (name, fn) {
+		this.removeEventListener(name, fn)
+	}
+	
+	// @ts-ignore
+	NodeList.prototype.removeListener = NodeList.prototype.removeEventListener =
+	function (name, fn) {
+		this.forEach(function (elem, i) {
+			// @ts-ignore
+			elem.removeListener(name, fn)
+		})
+	}
+
+// // Create element
+// Node.prototype.create = dom.create = function (sel, elm) {
+//   if (dom.get(sel)) {
+//     return dom.get(sel)
+//   }
+//   return dom.createElement(elm)
+// }

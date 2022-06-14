@@ -1,81 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="./main.js"></script>
-  </head>
-  <body>
-    <button is="my-button" count="0">
-      <span>click</span>
-      <span slot="named-slot">me</span>
-    </button>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="./dom.js" type="module"></script>
+		<script src="./component.js" type="module"></script>
+	</head>
+	<body>
+		<button is="my-button" count="0">
+			<span>click</span>
+			<span slot="named-slot">me</span>
+		</button>
 
-    <!-- <my-button id="counter" count="0">
-      <span>click</span>
-      <span slot="named-slot">me</span>
-    </my-button> -->
+		<!-- <my-button id="counter" count="0">
+			<span>click</span>
+			<span slot="named-slot">me</span>
+		</my-button> -->
 
-    <!-- <template id="MyButton">
-      <slot></slot>
-      <slot name="named-slot"></slot>
-      <span class="count"></span>
-    </template> -->
+		<!-- <template id="MyButton">
+			<slot></slot>
+			<slot name="named-slot"></slot>
+			<span class="count"></span>
+		</template> -->
 
-    <script type="module">
-      import { Comp } from "./dom.js";
+		<script type="module">
+			import { Comp } from "./component.js"
 
-      Comp(
-        {
-          name: "MyButton",
-          elm: "button",
-          // template: true,
-          init,
-          mount,
-          unmount,
-          mutated,
-          props: ["count"],
-        },
-        increment
-      );
+			Comp(
+				{
+					name: "MyButton",
+					elm: "button",
+					// template: true,
+					init,
+					mount,
+					unmount,
+					mutated,
+					props: ["count", "other"],
+				},
+				increment,
+				updateCount,
+				printOtherNotification,
+			);
 
-      function init() {
-        console.log("INITIALIZED");
-      }
+			function init() {
+				console.log("INITIALIZED");
+				this.other = 0;
+			}
 
-      function mount() {
-        console.log("MOUNTED");
+			function mount() {
+				console.log("MOUNTED");
 
-        this.addEventListener("click", this.increment);
+					this.addEventListener("click", this.increment);
 
-        return () => {
-          console.log("UNMOUNTED FROM MOUNT CALLBACK");
-          this.removeEventListener("click", this.increment);
-        };
-      }
+				return () => {
+					console.log("UNMOUNTED FROM MOUNT CALLBACK");
+					this.removeEventListener("click", this.increment);
+				};
+			}
 
-      function unmount() {
-        console.log("UNMOUNTED");
-      }
+			function unmount() {
+				console.log("UNMOUNTED");
+			}
 
-      function mutated(attrName, oldVal, newVal) {
-        console.log("MUTATED");
+			function mutated(attrName, oldVal, newVal) {
+				console.log("MUTATED");
 
-        let countContainer = this.get("span.count");
-        if (!countContainer) {
-          countContainer = dom.createElement("span");
-          countContainer.classList.add("count");
-          this.append(countContainer);
-        }
-        countContainer.textContent = " " + this.count;
-      }
+				if (attrName === "count") {
+					this.updateCount();
+				}
 
-      function increment() {
-        console.log("INCREMENTED");
-        this.count = +this.count + 1;
-      }
-    </script>
-  </body>
+				if (attrName === "other") {
+					 this.printOtherNotification();
+				}
+			}
+
+			function increment() {
+				console.log("INCREMENTED");
+				this.count = +this.count + 1;
+				this.other = +this.other + 1;
+			}
+
+			function updateCount() {
+				let countContainer = this.get("span.count");
+				if (!countContainer) {
+					countContainer = dom.createElement("span");
+					countContainer.classList.add("count");
+					this.append(countContainer);
+				}
+				countContainer.textContent = " " + this.count;
+			}
+
+			function printOtherNotification() {
+				console.log("Non-attribute prop has changed");
+			}
+		</script>
+	</body>
 </html>

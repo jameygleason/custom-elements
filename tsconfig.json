@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"allowSyntheticDefaultImports": true,
+		"allowUnreachableCode": true,
+		"esModuleInterop": true,
+		"baseUrl": ".",
+		"importHelpers": true,
+		"lib": ["es2021", "dom"],
+		"module": "es2020",
+		"moduleResolution": "node",
+		"noEmit": true,
+		"noImplicitThis": true,
+		"resolveJsonModule": false,
+		"skipLibCheck": true,
+		"strictNullChecks": true,
+		"target": "es2019",
+	},
+	"exclude": ["node_modules", "dist", "data/generated"]
+}
