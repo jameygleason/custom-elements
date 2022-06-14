@@ -8,11 +8,21 @@
     <script src="./main.js"></script>
   </head>
   <body>
-    <template id="MyButton">
-      <slot />
-    </template>
+    <button is="my-button" count="0">
+      <span>click</span>
+      <span slot="named-slot">me</span>
+    </button>
 
-    <button is="my-button" count="0">click</button>
+    <!-- <my-button id="counter" count="0">
+      <span>click</span>
+      <span slot="named-slot">me</span>
+    </my-button> -->
+
+    <!-- <template id="MyButton">
+      <slot></slot>
+      <slot name="named-slot"></slot>
+      <span class="count"></span>
+    </template> -->
 
     <script type="module">
       import { Comp } from "./dom.js";
@@ -21,6 +31,7 @@
         {
           name: "MyButton",
           elm: "button",
+          // template: true,
           init,
           mount,
           unmount,
@@ -40,7 +51,7 @@
         this.addEventListener("click", this.increment);
 
         return () => {
-          console.log("unmounted from mount callback");
+          console.log("UNMOUNTED FROM MOUNT CALLBACK");
           this.removeEventListener("click", this.increment);
         };
       }
@@ -52,10 +63,11 @@
       function mutated(attrName, oldVal, newVal) {
         console.log("MUTATED");
 
-        let countContainer = this.querySelector("span");
+        let countContainer = this.get("span.count");
         if (!countContainer) {
-          countContainer = document.createElement("span");
-          this.appendChild(countContainer);
+          countContainer = dom.createElement("span");
+          countContainer.classList.add("count");
+          this.append(countContainer);
         }
         countContainer.textContent = " " + this.count;
       }

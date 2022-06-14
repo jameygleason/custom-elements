@@ -1,7 +1,7 @@
 import { decamel } from "./utils.js";
 
 export function Comp(
-  { name, elm, init, mount, unmount, mutated, props },
+  { name, elm, template, init, mount, unmount, mutated, props },
   ...methods
 ) {
   try {
@@ -9,15 +9,29 @@ export function Comp(
       button: "HTMLButtonElement",
     };
 
-    Function(`class ${name} extends ${elmMap["button"]} {
+    if (elm && template) {
+      console.error("Cannot attach shadow root to non-generic elements");
+      console.error(
+        "Choose between hyphenated element name and native element with is attribute"
+      );
+    }
+
+    Function(`class ${name} extends ${
+      elmMap[elm] ? elmMap[elm] : "HTMLElement"
+    } {
 			constructor() {
 				super();
 
-				this.attachShadow({ mode: "open" })
-
-				let temp = document.getElementById("${name}")
-				let cl = temp.content.cloneNode(true)
-				this.shadowRoot.appendChild(cl)
+        ${
+          template
+            ? `
+          let shad = this.attachShadow({ mode: "open" });
+          let temp = dom.get("#${name}");
+          let cl = temp.content.cloneNode(true);
+          shad.appendChild(cl);
+        `
+            : ""
+        }
 
 				(${init && init}).call(this);
 
@@ -50,7 +64,6 @@ export function Comp(
 			}
 
 			static get observedAttributes() {
-				${console.log(props.map((p) => `"${p}"`).toString())}
 				return [${props.map((p) => `"${p}"`).toString()}]
 			}
 
@@ -62,7 +75,9 @@ export function Comp(
         .toString()
         .replaceAll("},", "};")}
 			}
-			customElements.define("${decamel(name)}", ${name},{extends:"${elm}"})
+			customElements.define("${decamel(name)}", ${name}, ${
+      elm && `{extends:"${elm}"}`
+    })
 		`)();
   } catch (err) {
     console.error(err);
