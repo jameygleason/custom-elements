@@ -1,0 +1,6 @@
+{
+  "name": "custom-elements",
+  "scripts": {
+    "push": "sh ./push.sh"
+  }
+}
