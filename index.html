@@ -48,7 +48,7 @@
 
 			function init() {
 				console.log("INITIALIZED");
-				this.other = JSON.stringify({ cool: false }, null, 2);
+				this.other = { cool: false };
 				this.pre = dom.get("#other")
 			}
 
@@ -57,7 +57,7 @@
 
 					this.addEventListener("click", this.increment);
 
-					this.pre.textContent = this.other, null, 2
+					this.pre.textContent = JSON.stringify(this.other, null, 2)
 
 				return () => {
 					console.log("UNMOUNTED FROM MOUNT CALLBACK");
@@ -84,9 +84,11 @@
 			function increment() {
 				console.log("INCREMENTED");
 				this.count = +this.count + 1;
-				// weird bug
-				this.other = JSON.stringify({ cool: true }, null, 2);
-				// this.other = JSON.stringify({ cool: true });
+				if (this.other.cool) {
+					this.other = { cool: false};
+				} else {
+					this.other = { cool: true };
+				}
 			}
 
 			function updateCount() {
@@ -100,7 +102,7 @@
 			}
 
 			function printOtherNotification() {
-				this.pre.textContent = this.other
+				this.pre.textContent = JSON.stringify(this.other, null, 2)
 			}
 		</script>
 	</body>

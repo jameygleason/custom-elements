@@ -77,7 +77,21 @@ export function Comp(
 				${props
 					.map(
 						(prop) =>
-							`get ${prop}() {return this.getAttribute("${prop}")};\nset ${prop}(val) {this.setAttribute("${prop}",val)};`
+							`get ${prop}() {
+								try {
+									return JSON.parse(this.getAttribute("${prop}"));
+								} catch(err) {
+									return this.getAttribute("${prop}");
+								}
+							};
+							set ${prop}(val) {
+								if (Array.isArray(val) || val.toString() === '[object Object]') {
+									console.log(JSON.stringify(val))
+									this.setAttribute("${prop}", JSON.stringify(val));
+									return
+								}
+								this.setAttribute("${prop}", val);
+							};`
 					).toString().replaceAll(',get', "\nget").replaceAll(',set', "\nset")}
 			}
 			customElements.define("${decamel(name)}", ${name}, ${elm && `{extends:"${elm}"}`})
