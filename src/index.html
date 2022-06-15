@@ -34,7 +34,7 @@
 		<script type="module">
 			import { Comp } from "./component.js"
 
-			const comp = new Comp(
+			const comp = Comp(
 				{
 					name: "MyButton",
 					elm: "button",
@@ -88,6 +88,7 @@
 			function increment() {
 				console.log("INCREMENTED")
 				this.count = +this.count + 1
+
 				if (this.other.cool) {
 					this.other = { cool: false }
 				} else {
@@ -98,7 +99,7 @@
 			function updateCount() {
 				let countContainer = this.get("span.count")
 				if (!countContainer) {
-					countContainer = dom.createElement("span")
+					countContainer = this.create("span.count", "span")
 					countContainer.classList.add("count")
 					this.append(countContainer)
 				}

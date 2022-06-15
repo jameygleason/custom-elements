@@ -44,10 +44,14 @@ NodeList.prototype.removeListener = NodeList.prototype.removeEventListener = fun
 	})
 }
 
-// // Create element
-// Node.prototype.create = dom.create = function (sel, elm) {
-//   if (dom.get(sel)) {
-//     return dom.get(sel)
-//   }
-//   return dom.createElement(elm)
-// }
+// Create element
+// @ts-ignore
+Node.prototype.create = dom.create = function (sel, elm) {
+	// @ts-ignore
+	if (dom.get(sel)) {
+		// @ts-ignore
+		return dom.get(sel)
+	}
+	// @ts-ignore
+	return dom.createElement(elm)
+}
