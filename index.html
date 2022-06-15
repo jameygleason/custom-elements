@@ -14,6 +14,8 @@
 			<span slot="named-slot">me</span>
 		</button>
 
+		<pre id="other"></pre>
+
 		<!-- <my-button id="counter" count="0">
 			<span>click</span>
 			<span slot="named-slot">me</span>
@@ -28,7 +30,7 @@
 		<script type="module">
 			import { Comp } from "./component.js"
 
-			Comp(
+			const comp = Comp(
 				{
 					name: "MyButton",
 					elm: "button",
@@ -46,13 +48,16 @@
 
 			function init() {
 				console.log("INITIALIZED");
-				this.other = 0;
+				this.other = JSON.stringify({ cool: false }, null, 2);
+				this.pre = dom.get("#other")
 			}
 
 			function mount() {
 				console.log("MOUNTED");
 
 					this.addEventListener("click", this.increment);
+
+					this.pre.textContent = this.other, null, 2
 
 				return () => {
 					console.log("UNMOUNTED FROM MOUNT CALLBACK");
@@ -79,7 +84,9 @@
 			function increment() {
 				console.log("INCREMENTED");
 				this.count = +this.count + 1;
-				this.other = +this.other + 1;
+				// weird bug
+				this.other = JSON.stringify({ cool: true }, null, 2);
+				// this.other = JSON.stringify({ cool: true });
 			}
 
 			function updateCount() {
@@ -93,7 +100,7 @@
 			}
 
 			function printOtherNotification() {
-				console.log("Non-attribute prop has changed");
+				this.pre.textContent = this.other
 			}
 		</script>
 	</body>

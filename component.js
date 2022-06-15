@@ -16,73 +16,75 @@ export function Comp(
 			);
 		}
 
-		Function(`class ${name} extends ${
-			elmMap[elm] ? elmMap[elm] : "HTMLElement"
-		} {
-			constructor() {
-				super();
+		let comp = Function(`
+			let comp;
+			class ${name} extends ${elmMap[elm] ? elmMap[elm] : "HTMLElement"} {
+				constructor() {
+					super();
 
-				${
-					template
-						? `
-					let shad = this.attachShadow({ mode: "open" });
-					let temp = dom.get("#${name}");
-					let cl = temp.content.cloneNode(true);
-					shad.appendChild(cl);
-				`
-						: ""
+					comp = this;
+
+					${
+						template
+							? `
+						let shad = this.attachShadow({ mode: "open" });
+						let temp = dom.get("#${name}");
+						let cl = temp.content.cloneNode(true);
+						shad.appendChild(cl);
+					`
+							: ""
+					}
+
+					${init ? `(${init}).call(this);` : ""}
+
+					let methods = ${methods.toString().replaceAll(",function", ";\nfunction")};
+
+					${methods
+						.map((_, i) => `this.${methods[i].name} = ${methods[i]};;`)
+						.toString()
+						.replaceAll(";,", "\n")
+					}
+
+					${methods
+						.map(
+							(_, i) =>
+								`this.${methods[i].name} = this.${methods[i].name}.bind(this);;`
+						)
+						.toString()
+						.replaceAll(";,", "\n")
+					}
 				}
 
-					(${init && init}).call(this);
-
-				let methods = ${methods.toString().replaceAll(",", ";\n")};
-				${methods
-					.map((_, i) => `this.${methods[i].name} = ${methods[i]};`)
-					.toString()
-					.replaceAll("},", "};")
-					.replaceAll(",", "\n")
+				connectedCallback() {
+					${mount ? `this.unmount = (${mount}).call(this);` : ""}
 				}
-				${ methods
+
+				disconnectedCallback() {
+					${unmount ? `(${unmount}).call(this);` : ""}
+					this.unmount && this.unmount.call(this);
+				}
+
+				attributeChangedCallback(attrName, oldVal, newVal) {
+					console.log("+++++++++++++++++++++++");
+					console.log("CHANGED:", attrName);
+					${mutated ? `(${mutated}).call(this, attrName, oldVal, newVal);` : ""}
+				}
+
+				static get observedAttributes() {
+					return [${props.map((p) => `"${p}"`).toString()}]
+				}
+
+				${props
 					.map(
-						(_, i) =>
-							`this.${methods[i].name} = this.${methods[i].name}.bind(this);`
-					)
-					.toString()
-					.replaceAll("},", "};")
-					.replaceAll(",", "\n")
-				}
+						(prop) =>
+							`get ${prop}() {return this.getAttribute("${prop}")};\nset ${prop}(val) {this.setAttribute("${prop}",val)};`
+					).toString().replaceAll(',get', "\nget").replaceAll(',set', "\nset")}
 			}
-
-			connectedCallback() {
-				this.unmount = (${mount && mount}).call(this);
-			}
-
-			disconnectedCallback() {
-				(${unmount && unmount}).call(this);
-				this.unmount && this.unmount.call(this);
-			}
-
-			attributeChangedCallback(attrName, oldVal, newVal) {
-				console.log("CHANGED:", attrName);
-				(${mutated && mutated}).call(this, attrName, oldVal, newVal);
-			}
-
-			static get observedAttributes() {
-				return [${props.map((p) => `"${p}"`).toString()}]
-			}
-
-			${props
-				.map(
-					(prop) =>
-						`get ${prop}() {return this.getAttribute("${prop}")};set ${prop}(val) {this.setAttribute("${prop}",val)}`
-				)
-				.toString()
-				.replaceAll("},", "};")}
-			}
-			customElements.define("${decamel(name)}", ${name}, ${
-			elm && `{extends:"${elm}"}`
-		})
+			customElements.define("${decamel(name)}", ${name}, ${elm && `{extends:"${elm}"}`})
+			return (comp)
 		`)();
+
+		return comp
 	} catch (err) {
 		console.error(err);
 	}
