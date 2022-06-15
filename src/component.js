@@ -1,22 +1,17 @@
-import { decamel } from "./utils.js";
+import { decamel } from "./utils.js"
 
-export function Comp(
-	{ name, elm, template, init, mount, unmount, mutated, props },
-	...methods
-) {
+export function Comp({ name, elm, template, init, mount, unmount, mutated, props }, ...methods) {
 	try {
 		const elmMap = {
 			button: "HTMLButtonElement",
-		};
+		}
 
 		if (elm && template) {
 			console.error("Cannot attach shadow root to non-generic elements")
-			console.error(
-				"Choose between hyphenated element name and native element with is attribute"
-			);
+			console.error("Choose between hyphenated element name and native element with is attribute")
 		}
 
-		let comp = Function(`
+		let comp = new Function(`
 			let comp;
 			class ${name} extends ${elmMap[elm] ? elmMap[elm] : "HTMLElement"} {
 				constructor() {
@@ -42,17 +37,12 @@ export function Comp(
 					${methods
 						.map((_, i) => `this.${methods[i].name} = ${methods[i]};;`)
 						.toString()
-						.replaceAll(";,", "\n")
-					}
+						.replaceAll(";,", "\n")}
 
 					${methods
-						.map(
-							(_, i) =>
-								`this.${methods[i].name} = this.${methods[i].name}.bind(this);;`
-						)
+						.map((_, i) => `this.${methods[i].name} = this.${methods[i].name}.bind(this);;`)
 						.toString()
-						.replaceAll(";,", "\n")
-					}
+						.replaceAll(";,", "\n")}
 				}
 
 				connectedCallback() {
@@ -71,12 +61,12 @@ export function Comp(
 				}
 
 				static get observedAttributes() {
-					return [${props.map((p) => `"${p}"`).toString()}]
+					return [${props.map(p => `"${p}"`).toString()}]
 				}
 
 				${props
 					.map(
-						(prop) =>
+						prop =>
 							`get ${prop}() {
 								try {
 									return JSON.parse(this.getAttribute("${prop}"));
@@ -91,15 +81,18 @@ export function Comp(
 									return
 								}
 								this.setAttribute("${prop}", val);
-							};`
-					).toString().replaceAll(',get', "\nget").replaceAll(',set', "\nset")}
+							};`,
+					)
+					.toString()
+					.replaceAll(",get", "\nget")
+					.replaceAll(",set", "\nset")}
 			}
 			customElements.define("${decamel(name)}", ${name}, ${elm && `{extends:"${elm}"}`})
 			return (comp)
-		`)();
+		`)()
 
 		return comp
 	} catch (err) {
-		console.error(err);
+		console.error(err)
 	}
 }

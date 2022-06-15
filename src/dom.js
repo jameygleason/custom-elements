@@ -24,27 +24,25 @@ Node.prototype.addListener = window.addListener = function (name, fn) {
 }
 
 // @ts-ignore
-NodeList.prototype.addListener = NodeList.prototype.addEventListener =
-function (name, fn) {
-	this.forEach(function (elem, i) {
-			// @ts-ignore
-			elem.addListener(name, fn)
-		})
-	}
-	
-	// @ts-ignore
-	Node.prototype.removeListener = window.removeListener = function (name, fn) {
-		this.removeEventListener(name, fn)
-	}
-	
-	// @ts-ignore
-	NodeList.prototype.removeListener = NodeList.prototype.removeEventListener =
-	function (name, fn) {
-		this.forEach(function (elem, i) {
-			// @ts-ignore
-			elem.removeListener(name, fn)
-		})
-	}
+NodeList.prototype.addListener = NodeList.prototype.addEventListener = function (name, fn) {
+	this.forEach(elem => {
+		// @ts-ignore
+		elem.addListener(name, fn)
+	})
+}
+
+// @ts-ignore
+Node.prototype.removeListener = window.removeListener = function (name, fn) {
+	this.removeEventListener(name, fn)
+}
+
+// @ts-ignore
+NodeList.prototype.removeListener = NodeList.prototype.removeEventListener = function (name, fn) {
+	this.forEach(elem => {
+		// @ts-ignore
+		elem.removeListener(name, fn)
+	})
+}
 
 // // Create element
 // Node.prototype.create = dom.create = function (sel, elm) {

@@ -14,6 +14,10 @@
 			<span slot="named-slot">me</span>
 		</button>
 
+		<button is="my-button">
+			<span>Is Cool?</span>
+		</button>
+
 		<pre id="other"></pre>
 
 		<!-- <my-button id="counter" count="0">
@@ -30,7 +34,7 @@
 		<script type="module">
 			import { Comp } from "./component.js"
 
-			const comp = Comp(
+			const comp = new Comp(
 				{
 					name: "MyButton",
 					elm: "button",
@@ -44,61 +48,61 @@
 				increment,
 				updateCount,
 				printOtherNotification,
-			);
+			)
 
 			function init() {
-				console.log("INITIALIZED");
-				this.other = { cool: false };
+				console.log("INITIALIZED")
+				this.other = { cool: false }
 				this.pre = dom.get("#other")
 			}
 
 			function mount() {
-				console.log("MOUNTED");
+				console.log("MOUNTED")
 
-					this.addEventListener("click", this.increment);
+				this.addEventListener("click", this.increment)
 
-					this.pre.textContent = JSON.stringify(this.other, null, 2)
+				this.pre.textContent = JSON.stringify(this.other, null, 2)
 
 				return () => {
-					console.log("UNMOUNTED FROM MOUNT CALLBACK");
-					this.removeEventListener("click", this.increment);
-				};
+					console.log("UNMOUNTED FROM MOUNT CALLBACK")
+					this.removeEventListener("click", this.increment)
+				}
 			}
 
 			function unmount() {
-				console.log("UNMOUNTED");
+				console.log("UNMOUNTED")
 			}
 
 			function mutated(attrName, oldVal, newVal) {
-				console.log("MUTATED");
+				console.log("MUTATED")
 
 				if (attrName === "count") {
-					this.updateCount();
+					this.updateCount()
 				}
 
 				if (attrName === "other") {
-					 this.printOtherNotification();
+					this.printOtherNotification()
 				}
 			}
 
 			function increment() {
-				console.log("INCREMENTED");
-				this.count = +this.count + 1;
+				console.log("INCREMENTED")
+				this.count = +this.count + 1
 				if (this.other.cool) {
-					this.other = { cool: false};
+					this.other = { cool: false }
 				} else {
-					this.other = { cool: true };
+					this.other = { cool: true }
 				}
 			}
 
 			function updateCount() {
-				let countContainer = this.get("span.count");
+				let countContainer = this.get("span.count")
 				if (!countContainer) {
-					countContainer = dom.createElement("span");
-					countContainer.classList.add("count");
-					this.append(countContainer);
+					countContainer = dom.createElement("span")
+					countContainer.classList.add("count")
+					this.append(countContainer)
 				}
-				countContainer.textContent = " " + this.count;
+				countContainer.textContent = " " + this.count
 			}
 
 			function printOtherNotification() {

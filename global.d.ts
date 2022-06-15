@@ -1,1 +1,1 @@
-declare var dom: Node;
+declare let dom: Node
