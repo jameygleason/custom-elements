@@ -66,14 +66,17 @@ Node.prototype.create = dom.create = sel => {
  * @typedef AttrTuple
  * @type {[string, string]}
  */
+/**
+ * @typedef Ag
+ * @type {[string, Array<AttrTuple>]}
+ */
 
 /**
  * @param {string} sel
- * @return {[string, Array<AttrTuple>]}
+ * @return {Ag}
  */
 function getAttrs(sel) {
 	let ag = []
-	let delims = ["#", ".", "["]
 	let lexVal = false
 
 	let i = 0
@@ -83,21 +86,22 @@ function getAttrs(sel) {
 		}
 
 		if (lexVal) {
-			if (delims.includes(sel[i])) {
+			if (["#", ".", "["].includes(sel[i])) {
 				lexVal = false
 				continue
 			}
-			if (!ag[1][ag[1].length - 1][1]) [(ag[1][ag[1].length - 1][1] = "")]
+
+			if (!ag[1][ag[1].length - 1][1]) {
+				ag[1][ag[1].length - 1][1] = ""
+			}
+
 			ag[1][ag[1].length - 1][1] = ag[1][ag[1].length - 1][1] += sel[i]
 			i++
 			continue
 		}
 
 		if (sel[i] === "#") {
-			if (!ag[1] || ag[1].length - 1 < 0) {
-				ag[1] = []
-				ag[1][0] = []
-			}
+			ag = fill(ag)
 			ag[1][ag[1].length - 1][0] = "id"
 			lexVal = true
 			i++
@@ -105,10 +109,7 @@ function getAttrs(sel) {
 		}
 
 		if (sel[i] === ".") {
-			if (!ag[1] || ag[1].length - 1 < 0) {
-				ag[1] = []
-				ag[1][0] = []
-			}
+			ag = fill(ag)
 			ag[1][ag[1].length - 1][0] = "class"
 			lexVal = true
 			i++
@@ -116,26 +117,52 @@ function getAttrs(sel) {
 		}
 
 		if (sel[i] === "[") {
-			if (!ag[1] || ag[1].length - 1 < 0) {
-				ag[1] = []
-				ag[1][0] = []
+			ag = fill(ag)
+			let onVal = false
+			i++
+
+			while (true) {
+				if (i > 100) break
+				if (i >= sel.length) {
+					return ag
+				}
+
+				if (sel[i] === "]") {
+					if (!ag[1][ag[1].length - 1][1]) {
+						ag[1][ag[1].length - 1][1] = ""
+					}
+					break
+				}
+
+				if (['"', "'", "`"].includes(sel[i])) {
+					i++
+					continue
+				}
+
+				if (sel[i] === "=") {
+					onVal = true
+					i++
+					continue
+				}
+
+				if (onVal) {
+					if (!ag[1][ag[1].length - 1][1]) {
+						ag[1][ag[1].length - 1][1] = ""
+					}
+
+					ag[1][ag[1].length - 1][1] = ag[1][ag[1].length - 1][1] += sel[i]
+					i++
+					continue
+				}
+
+				if (!ag[1][ag[1].length - 1][0]) {
+					ag[1][ag[1].length - 1][0] = ""
+				}
+
+				ag[1][ag[1].length - 1][0] += sel[i]
+				i++
 			}
-			// aag.length - 1][0] = "class"
-			// let attr = []
-			// let sp = sel.split("")
-			// let onVal = false
-			// for (let ii = 1; ii < sp - 1; i++) {
-			// 	if (sp[ii] === "=") {
-			// 		onVal = true
-			// 		continue
-			// 	}
-			// 	if (onVal) {
-			// 		attr[1] += sp[ii]
-			// 		continue
-			// 	}
-			// 	attr[0] += sp[ii]
-			// }
-			lexVal = true
+
 			i++
 			continue
 		}
@@ -151,8 +178,20 @@ function getAttrs(sel) {
 }
 
 /**
+ * @param {[string, Array<AttrTuple>]} ag
+ * @return {[string, Array<AttrTuple>]}
+ */
+function fill(ag) {
+	if (!ag[1] || ag[1].length - 1 < 0) {
+		ag[1] = []
+		ag[1][0] = []
+	}
+	return ag
+}
+
+/**
  * @param {HTMLElement}
- * @param {Array<any>}
+ * @param {Array<Ag>}
  */
 function setAttrs(el, ag) {
 	if (!ag[1] || ag[1].length < 1) {

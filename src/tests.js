@@ -35,11 +35,17 @@ setTimeout(() => {
 	btn.style.background = "red"
 }, 10000)
 
-const p = dom.create("p.para")
-p.textContent = "Florem"
+const p1 = dom.create("p.para")
+p1.textContent = "Florem"
 
-const pp = dom.create(".container p")
-pp.textContent = "Borem"
+const p2 = dom.create(".container p#contained")
+p2.textContent = "Borem"
 
-const ppp = dom.create("p.more-text")
-ppp.textContent = "More text"
+const p3 = dom.create("p.more-text")
+p3.textContent = "More text"
+
+const p4 = dom.create('p[test="true"]')
+p4.textContent = "Attribute text"
+
+const p5 = dom.create("p[hidden]")
+p5.textContent = "Hidden"
