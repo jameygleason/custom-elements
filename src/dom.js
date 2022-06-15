@@ -11,6 +11,16 @@ Node.prototype.getAll = function (sel) {
 	return this.querySelectorAll.bind(this).call(this, sel)
 }
 
+// Text content
+Node.prototype.text = function (text) {
+	this.textContent = text
+}
+
+// HTML content
+Node.prototype.html = function (text) {
+	this.innerHTML = text
+}
+
 // Give node lists array properties
 NodeList.prototype.__proto__ = Array.prototype
 
@@ -36,7 +46,15 @@ NodeList.prototype.removeListener = NodeList.prototype.removeEventListener = fun
 }
 
 // Create element
-Node.prototype.create = dom.create = sel => {
+/**
+ * @typedef Pos
+ * @type "beforebegin" | "afterbegin" | "beforeend" | "afterend"
+ */
+/**
+ * @param {string} sel
+ * @param {Pos} pos
+ */
+Node.prototype.create = dom.create = (sel, pos) => {
 	let split = sel.split(" ")
 	let el = dom.get(sel)
 
@@ -57,7 +75,20 @@ Node.prototype.create = dom.create = sel => {
 		return el
 	}
 
-	let par = dom.get(split.slice(0, split.length - 1))
+	let parSel = split.slice(0, split.length - 1)
+
+	let par = dom.get(parSel)
+	if (!par) {
+		console.error(`Parent Node "${parSel}" does not exist`)
+		document.body.appendChild(el)
+		return el
+	}
+
+	if (pos) {
+		par.insertAdjacentElement(pos, el)
+		return el
+	}
+
 	par.appendChild(el)
 	return el
 }
