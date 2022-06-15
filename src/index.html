@@ -9,6 +9,9 @@
 		<script src="./component.js" type="module"></script>
 	</head>
 	<body>
+		<a href="/">Abstraction</a><span> </span><a href="/standard.html">Standard</a>
+		<h1>Abstraction</h1>
+
 		<button is="my-button" count="0">
 			<span>click</span>
 			<span slot="named-slot">me</span>
@@ -18,11 +21,13 @@
 			<span>Is Cool?</span>
 		</button>
 
-		<pre id="other"></pre>
-
-		<!-- <my-button id="counter" count="0">
+		<!-- <my-button count="0">
 			<span>click</span>
 			<span slot="named-slot">me</span>
+		</my-button> -->
+
+		<!-- <my-button>
+			<span>Is Cool?</span>
 		</my-button> -->
 
 		<!-- <template id="MyButton">
@@ -30,6 +35,8 @@
 			<slot name="named-slot"></slot>
 			<span class="count"></span>
 		</template> -->
+
+		<pre id="other"></pre>
 
 		<script type="module">
 			import { Comp } from "./component.js"
@@ -53,7 +60,7 @@
 			function init() {
 				console.log("INITIALIZED")
 				this.other = { cool: false }
-				this.pre = dom.get("#other")
+				this.pre = document.querySelector("#other")
 			}
 
 			function mount() {
@@ -97,9 +104,9 @@
 			}
 
 			function updateCount() {
-				let countContainer = this.get("span.count")
+				let countContainer = this.querySelector("span.count")
 				if (!countContainer) {
-					countContainer = this.create("span.count", "span")
+					countContainer = document.createElement("span")
 					countContainer.classList.add("count")
 					this.append(countContainer)
 				}

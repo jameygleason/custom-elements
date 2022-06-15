@@ -11,7 +11,9 @@ export function Comp({ name, elm, template, init, mount, unmount, mutated, props
 			console.error("Choose between hyphenated element name and native element with is attribute")
 		}
 
-		let comp = new Function(`
+		props = props || []
+
+		let comp = Function(`
 			let comp;
 			class ${name} extends ${elmMap[elm] ? elmMap[elm] : "HTMLElement"} {
 				constructor() {
