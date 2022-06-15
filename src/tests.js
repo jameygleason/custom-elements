@@ -13,7 +13,7 @@ unMountTest()
 
 // Get test
 const div = dom.get("div")
-div.innerHTML = "<h1>Hello!</h1>"
+div.innerHTML = "<h1>Dom Tests</h1>"
 
 // Get all test
 const lis = dom.getAll("li")
