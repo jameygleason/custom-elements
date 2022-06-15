@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // Unmount test
 function unMountTest() {
 	const btn = document.querySelector('[is="my-button"]')
@@ -9,17 +11,17 @@ function unMountTest() {
 }
 unMountTest()
 
-// @ts-ignore
+// Get test
 const div = dom.get("div")
 div.innerHTML = "<h1>Hello!</h1>"
 
-// @ts-ignore
+// Get all test
 const lis = dom.getAll("li")
 for (const li of lis) {
 	li.innerHTML = "Hiya!"
 }
 
-// @ts-ignore
+// Listener tets
 const btn = dom.get("button")
 
 function log() {
@@ -33,9 +35,11 @@ setTimeout(() => {
 	btn.style.background = "red"
 }, 10000)
 
-// const p = dom.create(".para", "p");
-// const pp = dom.create(".container p", "p");
-// pp.textContent = "Borem";
-// const cont = dom.get(".container");
-// cont.append(p);
-// cont.append(pp);
+const p = dom.create("p.para")
+p.textContent = "Florem"
+
+const pp = dom.create(".container p")
+pp.textContent = "Borem"
+
+const ppp = dom.create("p.more-text")
+ppp.textContent = "More text"

@@ -57,8 +57,8 @@ export function Comp({ name, elm, template, init, mount, unmount, mutated, props
 				}
 
 				attributeChangedCallback(attrName, oldVal, newVal) {
-					console.log("+++++++++++++++++++++++");
-					console.log("CHANGED:", attrName);
+					// console.log("+++++++++++++++++++++++");
+					// console.log("CHANGED:", attrName);
 					${mutated ? `(${mutated}).call(this, attrName, oldVal, newVal);` : ""}
 				}
 
@@ -78,7 +78,6 @@ export function Comp({ name, elm, template, init, mount, unmount, mutated, props
 							};
 							set ${prop}(val) {
 								if (Array.isArray(val) || val.toString() === '[object Object]') {
-									console.log(JSON.stringify(val))
 									this.setAttribute("${prop}", JSON.stringify(val));
 									return
 								}

@@ -9,7 +9,10 @@
 		<script src="./component.js" type="module"></script>
 	</head>
 	<body>
-		<a href="/">Abstraction</a><span> </span><a href="/standard.html">Standard</a>
+		<a href="/">Abstraction</a>
+		<a href="/standard.html">Standard</a>
+		<a href="/domtests.html">Dom Tests</a>
+
 		<h1>Abstraction</h1>
 
 		<button is="my-button" count="0">
@@ -58,30 +61,30 @@
 			)
 
 			function init() {
-				console.log("INITIALIZED")
+				// console.log("INITIALIZED")
 				this.other = { cool: false }
 				this.pre = document.querySelector("#other")
 			}
 
 			function mount() {
-				console.log("MOUNTED")
+				// console.log("MOUNTED")
 
 				this.addEventListener("click", this.increment)
 
 				this.pre.textContent = JSON.stringify(this.other, null, 2)
 
 				return () => {
-					console.log("UNMOUNTED FROM MOUNT CALLBACK")
+					// console.log("UNMOUNTED FROM MOUNT CALLBACK")
 					this.removeEventListener("click", this.increment)
 				}
 			}
 
 			function unmount() {
-				console.log("UNMOUNTED")
+				// console.log("UNMOUNTED")
 			}
 
 			function mutated(attrName, oldVal, newVal) {
-				console.log("MUTATED")
+				// console.log("MUTATED")
 
 				if (attrName === "count") {
 					this.updateCount()
@@ -93,7 +96,7 @@
 			}
 
 			function increment() {
-				console.log("INCREMENTED")
+				// console.log("INCREMENTED")
 				this.count = +this.count + 1
 
 				if (this.other.cool) {
@@ -104,7 +107,8 @@
 			}
 
 			function updateCount() {
-				let countContainer = this.querySelector("span.count")
+				let countContainer = this.get("span.count")
+				// console.log("countContainer:", countContainer)
 				if (!countContainer) {
 					countContainer = document.createElement("span")
 					countContainer.classList.add("count")
