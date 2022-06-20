@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { http } from "./dom.js"
 
 // Unmount test
 function unMountTest() {
@@ -56,3 +57,12 @@ dom.create("#list h2", "beforebegin").html("<span>Quick list</span>")
 for (let i = 0; i < 3; i++) {
 	dom.create("#list li").text(`${i} hi`)
 }
+
+// Fetch test
+async function fetchTest() {
+	const get = await http.get("https://dog.ceo/api/breeds/image/random")
+	console.log("GET:", get)
+	const post = await http.post("https://dog.ceo/api/breeds/image/random")
+	console.log("POST:", post)
+}
+fetchTest()

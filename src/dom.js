@@ -237,3 +237,21 @@ function setAttrs(el, ag) {
 		el.setAttribute(ag[1][i][0], ag[1][i][1])
 	}
 }
+
+// Fetch / HTTP
+class Http {
+	async get(url, opts = {}, rf = "json") {
+		let res = await fetch(url, opts)
+		return await res[rf]()
+	}
+
+	async post(url, opts = {}, rf = "json") {
+		let res = await fetch(url, {
+			...opts,
+			method: "POST",
+		})
+		return await res[rf]()
+	}
+}
+
+export const http = new Http()
